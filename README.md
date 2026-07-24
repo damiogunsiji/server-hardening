@@ -51,9 +51,13 @@ Running both has **no negative effect** — they operate at different layers and
 
 ---
 
-## 2. Create a Sudo User
+## 2. Users
 
-Don't do everything as root. Create a regular user with sudo access.
+Running everything as root is risky. If a process or app gets compromised under root, the attacker owns your entire server. Different tasks need different privilege levels, so create separate users for each job.
+
+### 2a. Create a Sudo User (Admin Access)
+
+A sudo user is for day-to-day administration: installing packages, editing configs, restarting services. You use `sudo` to elevate only when needed, so mistakes or exploits don't automatically have root privileges.
 
 ```bash
 adduser <username>   # you'll be prompted to set a password
@@ -76,7 +80,25 @@ sudo whoami   # should print "root"
 exit          # back to root
 ```
 
----
+### 2b. Create a Non-Sudo User (Deployment / App User)
+
+For deploying and running applications, create a user with **no** sudo access. This user only owns its own files and processes — if an app gets compromised, the attacker can't install malware, modify system files, or read other users' data.
+
+```bash
+adduser <deploy-user>   # e.g., "deploy" or "app" or "www"
+```
+
+That's it — no `usermod -aG sudo`. This user can SSH in, run their apps, and access their own home directory, but cannot run `sudo` or touch system files.
+
+If a specific app needs bare-minimum access, you can optionally lock it further by setting its shell to `/usr/sbin/nologin`:
+
+```bash
+usermod -s /usr/sbin/nologin <deploy-user>
+```
+
+This prevents interactive logins — the user can still run commands via systemd services or SSH key-based commands, but cannot get a shell.
+
+**Pro tip:** Create separate non-sudo users for each project/service. That way a compromise in one app doesn't spill over to others.
 
 ## 3. SSH Hardening
 
