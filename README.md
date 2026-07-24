@@ -58,9 +58,9 @@ Add the `[sshd]` section:
 [sshd]
 enabled = true
 port = ssh
-maxretry = 5
-bantime = 3600
-findtime = 600
+maxretry = 3
+findtime = 10m
+bantime = 1h
 ```
 
 Fail2Ban will automatically inherit all other default values from `jail.conf`, so you only need to define what you want to change.
@@ -95,8 +95,8 @@ You should see `sshd` listed as an active jail.
 
 What these mean:
 - `maxretry = 5` — ban after 5 failed attempts
-- `findtime = 600` — those 5 attempts must happen within 10 minutes
-- `bantime = 3600` — ban lasts 1 hour
+- `findtime = 10m` — those 5 attempts must happen within 10 minutes
+- `bantime = 1h` — ban lasts 1 hour
 
 Restart and check it's running:
 
