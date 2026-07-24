@@ -16,6 +16,12 @@ ssh root@your-server-ip
 apt update && apt upgrade -y
 ```
 
+Not all VPS images ship with ufw installed. Install it if missing:
+
+```bash
+apt install ufw -y
+```
+
 ```bash
 reboot
 ```
@@ -46,15 +52,24 @@ ufw status verbose
 Don't do everything as root. Create a regular user with sudo access.
 
 ```bash
-adduser <username>
+adduser <username>   # you'll be prompted to set a password
 usermod -aG sudo <username>
 ```
 
-Verify it works:
+Test that you can SSH in as this user. Open a **new terminal** on your local machine:
+
+```bash
+ssh <username>@your-server-ip
+```
+
+If it works, continue. If it fails, fix the issue before moving on — this is your fallback after root login is disabled later.
+
+Back in the root session, verify sudo works:
 
 ```bash
 su - <username>
 sudo whoami   # should print "root"
+exit          # back to root
 ```
 
 ---
@@ -96,24 +111,27 @@ PermitRootLogin no
 - **`PasswordAuthentication no`** — no password logins, only keys
 - **`PermitRootLogin no`** — root cannot SSH in at all. Use your sudo user instead
 
-> 🔴 **Stop here.** Open a **second terminal** and test the new config before you close the current session:
-> ```bash
-> ssh -p <port> <username>@your-server-ip
-> ```
-> If it works, you're safe. If it fails, fix the issue from your current session.
+If you changed the port, allow it through UFW first:
 
-Once confirmed working in both terminals, apply:
+```bash
+ufw allow <port>/tcp
+```
+
+Apply the new SSH config:
 
 ```bash
 systemctl restart ssh
 ```
 
-If you changed the port, allow it through UFW and remove the old one:
-
-```bash
-ufw allow <port>/tcp
-ufw delete allow 22/tcp
-```
+> 🔴 **Keep this terminal open.** Open a **second terminal** and test the new config:
+> ```bash
+> ssh -p <port> <username>@your-server-ip
+> ```
+> If it works, remove the old port from UFW:
+> ```bash
+> ufw delete allow 22/tcp
+> ```
+> If it **fails**, you can still fix the config from the first terminal — don't close it.
 
 ---
 
