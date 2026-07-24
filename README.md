@@ -45,19 +45,14 @@ systemctl enable fail2ban
 systemctl start fail2ban
 ```
 
-The default config file is `/etc/fail2ban/jail.conf` but you shouldn't edit that directly — package updates will overwrite it. Copy it to a `.local` file instead.
-
-```bash
-cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-```
-
-Open the local copy and find the `[sshd]` section:
+````markdown
+The default config file is `/etc/fail2ban/jail.conf` but you shouldn't edit that directly — package updates will overwrite it. Instead of copying the entire file, create a `.local` override file with only the settings you need. This keeps your configuration clean and ensures future updates don’t break your setup.
 
 ```bash
 nano /etc/fail2ban/jail.local
-```
+````
 
-Look for this block and set it accordingly:
+Add the `[sshd]` section:
 
 ```
 [sshd]
@@ -67,6 +62,36 @@ maxretry = 5
 bantime = 3600
 findtime = 600
 ```
+
+Fail2Ban will automatically inherit all other default values from `jail.conf`, so you only need to define what you want to change.
+
+Restart Fail2Ban to apply the changes:
+
+```bash
+systemctl restart fail2ban
+```
+
+To confirm it’s working:
+
+```bash
+fail2ban-client status
+```
+
+You should see `sshd` listed as an active jail.
+
+---
+
+### 📖 Documentation
+
+[Fail2Ban jail.conf manual (Debian)](https://manpages.debian.org/experimental/fail2ban/jail.conf.5.en.html?utm_source=chatgpt.com)
+
+[Fail2Ban jail.conf man page (FreeBSD)](https://man.freebsd.org/cgi/man.cgi?query=fail2ban-jail.conf&sektion=5&utm_source=chatgpt.com)
+
+> “Specify only the settings you would like to change and the rest… comes from the corresponding .conf file.”
+
+```
+```
+
 
 What these mean:
 - `maxretry = 5` — ban after 5 failed attempts
