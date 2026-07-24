@@ -45,6 +45,10 @@ Verify:
 ufw status verbose
 ```
 
+**Note:** Some VPS providers (e.g., Hetzner) offer a dashboard firewall that blocks ports externally. If you already allow only 22, 80, 443 there, UFW on the server is optional — you can skip this section.
+
+Running both has **no negative effect** — they operate at different layers and don't conflict. The dashboard firewall blocks traffic before it reaches your server; UFW adds a second layer inside the OS. The only tradeoff is managing rules in two places.
+
 ---
 
 ## 2. Create a Sudo User
