@@ -30,6 +30,8 @@ reboot
 
 ## 1. UFW Firewall
 
+UFW is system-wide — once enabled, it protects all users and processes on the machine. No need for each user to configure their own firewall.
+
 Allow only the ports you need. Replace `22` with your custom SSH port if you change it later.
 
 ```bash
@@ -163,7 +165,7 @@ systemctl restart ssh
 
 ## 4. Fail2ban
 
-Fail2ban watches auth logs and bans IPs that hammer the retry limit.
+Fail2ban is system-wide — all users benefit from its bans. It watches auth logs and blocks any IP that exceeds the retry limit, regardless of which user was being targeted.
 
 ```bash
 apt install fail2ban -y
