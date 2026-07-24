@@ -65,6 +65,8 @@ bantime = 1h
 
 Fail2Ban will automatically inherit all other default values from `jail.conf`, so you only need to define what you want to change.
 
+NOTE: If you are not using the default SSH port (22), make sure to update the port value to match your custom port (e.g. port = 2222). Otherwise, Fail2Ban won’t correctly monitor or ban attempts on that port.
+
 Restart Fail2Ban to apply the changes:
 
 ```bash
