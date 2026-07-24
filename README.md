@@ -96,8 +96,8 @@ You should see `sshd` listed as an active jail.
 
 
 What these mean:
-- `maxretry = 5` — ban after 5 failed attempts
-- `findtime = 10m` — those 5 attempts must happen within 10 minutes
+- `maxretry = 5` — ban after 3 failed attempts
+- `findtime = 10m` — those 3 attempts must happen within 10 minutes
 - `bantime = 1h` — ban lasts 1 hour
 
 Restart and check it's running:
