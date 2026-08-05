@@ -82,6 +82,28 @@ sudo whoami   # should print "root"
 exit          # back to root
 ```
 
+#### Create a Non-Root User with Passwordless Sudo
+
+For automation (CI/CD, Ansible, scripts) or key-only setups where typing a sudo password isn't practical, create a user with no login password but full passwordless `sudo`:
+
+```bash
+adduser --disabled-password <username>
+echo "<username> ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/<username>
+chmod 440 /etc/sudoers.d/<username>
+```
+
+- `--disabled-password` — the account has no password, so password-based SSH logins are impossible; access is via SSH key only (set up in section 3a)
+- The `/etc/sudoers.d/<username>` drop-in grants `NOPASSWD` — `sudo` never prompts for a password
+
+Verify:
+
+```bash
+su - <username>
+sudo whoami   # should print "root" without prompting
+```
+
+**Security note:** `NOPASSWD: ALL` means anyone holding this user's SSH key gets full admin access with zero additional prompts. Prefer a regular sudo user for interactive use; use this only when automation truly needs it.
+
 ### 2b. Create a Non-Sudo User (Deployment / App User)
 
 For deploying and running applications, create a user with **no** sudo access. This user only owns its own files and processes — if an app gets compromised, the attacker can't install malware, modify system files, or read other users' data.
