@@ -203,8 +203,6 @@ nano /etc/fail2ban/jail.local
 ```ini
 [sshd]
 enabled = true
-filter = sshd
-mode = aggressive
 port = ssh
 maxretry = 6
 findtime = 10m
@@ -214,12 +212,22 @@ bantime = 5h
 What each option does:
 
 - **`enabled = true`** — turns this jail on
-- **`filter = sshd`** — uses the sshd filter (`/etc/fail2ban/filter.d/sshd.conf`) to match failed login attempts in the auth logs
-- **`mode = aggressive`** — applies the aggressive ruleset of the sshd filter, which catches more attack patterns (invalid users, pre-auth errors, etc.) than the default `normal` mode. Only valid when the filter ships modes — Debian/Ubuntu's sshd filter does
 - **`port = ssh`** — which port fail2ban blocks on; `ssh` resolves to port 22 via `/etc/services`
 - **`maxretry = 6`** — number of failed attempts allowed before a ban
 - **`findtime = 10m`** — the time window (10 minutes) in which those failures are counted
 - **`bantime = 5h`** — how long a banned IP stays banned
+
+**Recommended upgrade:** modern SSH scanners and bots trigger a lot of the "extra / ddos" log lines that normal mode ignores. To catch more attack patterns, add these two lines to the `[sshd]` jail:
+
+```ini
+filter = sshd
+mode = aggressive
+```
+
+- **`filter = sshd`** — uses the sshd filter (`/etc/fail2ban/filter.d/sshd.conf`) to match failed login attempts in the auth logs (already the default for this jail, included for clarity)
+- **`mode = aggressive`** — applies the aggressive ruleset of the sshd filter, catching invalid users, pre-auth errors, and similar lines that the default `normal` mode ignores. Only valid when the filter ships modes — Debian/Ubuntu's sshd filter does
+
+False positives are unlikely with key-only authentication. If you ever ban yourself, add your own IP to `ignoreip` or raise `maxretry`.
 
 When using a custom SSH port, replace `port = ssh` with the actual port number:
 
