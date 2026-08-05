@@ -82,7 +82,7 @@ sudo whoami   # should print "root"
 exit          # back to root
 ```
 
-#### Create a Non-Root User with Passwordless Sudo
+#### Create a Non-Root User with Passwordless Sudo Access
 
 For automation (CI/CD, Ansible, scripts) or key-only setups where typing a sudo password isn't practical, create a user with no login password but full passwordless `sudo`:
 
