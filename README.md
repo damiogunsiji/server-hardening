@@ -203,11 +203,23 @@ nano /etc/fail2ban/jail.local
 ```ini
 [sshd]
 enabled = true
-port = ssh                       # use "ssh" for port 22, or your custom port number
+filter = sshd
+mode = aggressive
+port = ssh
 maxretry = 6
 findtime = 10m
 bantime = 5h
 ```
+
+What each option does:
+
+- **`enabled = true`** — turns this jail on
+- **`filter = sshd`** — uses the sshd filter (`/etc/fail2ban/filter.d/sshd.conf`) to match failed login attempts in the auth logs
+- **`mode = aggressive`** — applies the aggressive ruleset of the sshd filter, which catches more attack patterns (invalid users, pre-auth errors, etc.) than the default `normal` mode. Only valid when the filter ships modes — Debian/Ubuntu's sshd filter does
+- **`port = ssh`** — which port fail2ban blocks on; `ssh` resolves to port 22 via `/etc/services`
+- **`maxretry = 6`** — number of failed attempts allowed before a ban
+- **`findtime = 10m`** — the time window (10 minutes) in which those failures are counted
+- **`bantime = 5h`** — how long a banned IP stays banned
 
 When using a custom SSH port, replace `port = ssh` with the actual port number:
 
