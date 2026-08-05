@@ -161,6 +161,8 @@ PermitRootLogin no
 - **`PasswordAuthentication no`** — no password logins, only keys
 - **`PermitRootLogin no`** — root cannot SSH in at all. Use your sudo user instead
 
+**Why change the port?** Almost all bots and scanners only knock on port 22 — the default. A random high port (e.g. `45678`) makes your SSH door effectively invisible to that noise, so the vast majority of brute-force traffic never reaches your server. It's not real security (a full port scan still finds it — fail2ban is your safety net), but it eliminates ~99% of background scans.
+
 If you changed the port, allow it through UFW first:
 
 ```bash
