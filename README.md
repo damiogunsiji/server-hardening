@@ -1,10 +1,10 @@
-# Hardening a Fresh Linux VPS
+# 🛡️ Hardening a Fresh Linux VPS
 
 Lock down a new Debian/Ubuntu VPS against bots and brute-force attacks.
 
 ---
 
-## Prerequisites
+## 📦 Prerequisites
 
 SSH in as root and get the system current.
 
@@ -28,7 +28,7 @@ reboot
 
 ---
 
-## 1. UFW Firewall
+## 🔥 1. UFW Firewall
 
 UFW is system-wide — once enabled, it protects all users and processes on the machine. No need for each user to configure their own firewall.
 
@@ -47,13 +47,13 @@ Verify:
 ufw status verbose
 ```
 
-**Note:** Some VPS providers (e.g., Hetzner) offer a dashboard firewall that blocks ports externally. If you already allow only 22, 80, 443 there, UFW on the server is optional — you can skip this section.
+ℹ️ **Note:** Some VPS providers (e.g., Hetzner) offer a dashboard firewall that blocks ports externally. If you already allow only 22, 80, 443 there, UFW on the server is optional — you can skip this section.
 
 Running both has **no negative effect** — they operate at different layers and don't conflict. The dashboard firewall blocks traffic before it reaches your server; UFW adds a second layer inside the OS. The only tradeoff is managing rules in two places.
 
 ---
 
-## 2. Users
+## 👤 2. Users
 
 Running everything as root is risky. If a process or app gets compromised under root, the attacker owns your entire server. Different tasks need different privilege levels, so create separate users for each job.
 
@@ -102,7 +102,7 @@ su - <username>
 sudo whoami   # should print "root" without prompting
 ```
 
-**Security note:** `NOPASSWD: ALL` means anyone holding this user's SSH key gets full admin access with zero additional prompts. Prefer a regular sudo user for interactive use; use this only when automation truly needs it.
+⚠️ **Security note:** `NOPASSWD: ALL` means anyone holding this user's SSH key gets full admin access with zero additional prompts. Prefer a regular sudo user for interactive use; use this only when automation truly needs it.
 
 ### 2b. Create a Non-Sudo User (Deployment / App User)
 
@@ -122,9 +122,9 @@ usermod -s /usr/sbin/nologin <deploy-user>
 
 This prevents interactive logins — the user can still run commands via systemd services or SSH key-based commands, but cannot get a shell.
 
-**Pro tip:** Create separate non-sudo users for each project/service. That way a compromise in one app doesn't spill over to others.
+💡 **Pro tip:** Create separate non-sudo users for each project/service. That way a compromise in one app doesn't spill over to others.
 
-## 3. SSH Hardening
+## 🔑 3. SSH Hardening
 
 ### 3a. Add your SSH key
 
@@ -161,7 +161,7 @@ PermitRootLogin no
 - **`PasswordAuthentication no`** — no password logins, only keys
 - **`PermitRootLogin no`** — root cannot SSH in at all. Use your sudo user instead
 
-**Why change the port?** Almost all bots and scanners only knock on port 22 — the default. A random high port (e.g. `45678`) makes your SSH door effectively invisible to that noise, so the vast majority of brute-force traffic never reaches your server. It's not real security (a full port scan still finds it — fail2ban is your safety net), but it eliminates ~99% of background scans.
+💡 **Why change the port?** Almost all bots and scanners only knock on port 22 — the default. A random high port (e.g. `45678`) makes your SSH door effectively invisible to that noise, so the vast majority of brute-force traffic never reaches your server. It's not real security (a full port scan still finds it — fail2ban is your safety net), but it eliminates ~99% of background scans.
 
 If you changed the port, allow it through UFW first:
 
@@ -187,7 +187,7 @@ systemctl restart ssh
 
 ---
 
-## 4. Fail2ban
+## 🚫 4. Fail2ban
 
 Fail2ban is system-wide — all users benefit from its bans. It watches auth logs and blocks any IP that exceeds the retry limit, regardless of which user was being targeted.
 
@@ -219,7 +219,7 @@ What each option does:
 - **`findtime = 10m`** — the time window (10 minutes) in which those failures are counted
 - **`bantime = 5h`** — how long a banned IP stays banned
 
-**Recommended upgrade:** modern SSH scanners and bots trigger a lot of the "extra / ddos" log lines that normal mode ignores. To catch more attack patterns, add these two lines to the `[sshd]` jail:
+🎯 **Recommended upgrade:** modern SSH scanners and bots trigger a lot of the "extra / ddos" log lines that normal mode ignores. To catch more attack patterns, add these two lines to the `[sshd]` jail:
 
 ```ini
 filter = sshd
@@ -251,7 +251,7 @@ fail2ban-client status sshd
 
 ---
 
-## 5. ADVANCED (Optional) — CrowdSec + Firewall Bouncer
+## ⚡ 5. ADVANCED (Optional) — CrowdSec + Firewall Bouncer
 
 CrowdSec adds behavioral detection and community-driven IP reputation. Use it if you want a second layer beyond Fail2ban or manage multiple servers.
 
@@ -285,7 +285,7 @@ cscli decisions list
 
 ---
 
-## Useful Commands
+## 📋 Useful Commands
 
 ```bash
 # Fail2ban
